@@ -15,68 +15,88 @@
 // See the License for the specific language governing permissions and
 
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Reflection;
 
-using MonoTouch.CoreGraphics;
 using MonoTouch.Dialog;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 
-namespace Poupou.Awesome.Demo {
+namespace Poupou.Awesome.Demo
+{
 
-	[Register ("AppDelegate")]
-	public partial class AppDelegate : UIApplicationDelegate {
+  [Register("AppDelegate")]
+  public partial class AppDelegate : UIApplicationDelegate
+  {
 
-		UIWindow window;
+    UIWindow window;
 
-		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
-		{
-			window = new UIWindow (UIScreen.MainScreen.Bounds);
+    public override bool FinishedLaunching(UIApplication app,
+                                           NSDictionary options)
+    {
+      window = new UIWindow(UIScreen.MainScreen.Bounds);
 			
-			RootElement root = new RootElement (String.Empty);
-			root.Add (Populate ());
-			window.RootViewController = new DialogViewController (UITableViewStyle.Plain, root);
-			window.MakeKeyAndVisible ();
-			return true;
-		}
+      RootElement root = new RootElement(String.Empty);
+      root.Add(Populate());
+      window.RootViewController = new DialogViewController(UITableViewStyle.Plain,
+                                                           root);
+      window.MakeKeyAndVisible();
+      return true;
+    }
 
-		// it's still fast enough for my iPad 1st gen - but it might need moving to a separate thread in the future
-		static Section Populate ()
-		{
-			Elements e = new Elements ();
-			Section s = new Section ();
-			foreach (FieldInfo fi in typeof (Elements).GetFields (BindingFlags.NonPublic | BindingFlags.Instance)) {
-				if (!fi.Name.StartsWith ("icon_"))
-					continue;
-				s.Add ((Element) fi.GetValue (e));
-			}
-			return s;
-		}
+    // it's still fast enough for my iPad 1st gen - but it might need moving to a separate thread in the future
+    static Section Populate()
+    {
+      Elements e = new Elements();
+      Section s = new Section();
+      foreach (FieldInfo fi in typeof (Elements).GetFields (BindingFlags.NonPublic | BindingFlags.Instance))
+      {
+        if (!fi.Name.StartsWith("icon_"))
+          continue;
+        s.Add((Element)fi.GetValue(e));
+      }
+      return s;
+    }
 
-		static void Main (string[] args)
-		{
-			UIApplication.Main (args, null, "AppDelegate");
-		}
-	}
+    static void Main(string[] args)
+    {
+      UIApplication.Main(args,
+                         null,
+                         "AppDelegate");
+    }
+  }
 
-	public partial class Elements {
+  public partial class Elements
+  {
 
-		static public UIImage GetAwesomeIcon (Action<CGContext> render)
-		{
-			float size = 40f;
-			UIGraphics.BeginImageContextWithOptions (new SizeF (size, size), false, 0.0f);
-			using (var c = UIGraphics.GetCurrentContext ()) {
-				c.SetFillColor (0.5f, 0.5f, 0.5f, 0.5f);
-				c.SetStrokeColor (0.5f, 0.5f, 0.5f, 0.5f);
-				// settings needs to be adjusted from the SVG path values, those works well for FontAwesome
-				c.TranslateCTM (4f, size - 4);
-				c.ScaleCTM (size / 2500, -size / 2500);
-				render (c);
-			}
-			UIImage img = UIGraphics.GetImageFromCurrentImageContext ();
-			UIGraphics.EndImageContext ();
-			return img;
-		}
-	}
+    static public UIImage GetAwesomeIcon(Action<CGContext> render)
+    {
+      float size = 40f;
+      UIGraphics.BeginImageContextWithOptions(new CGSize(size,
+                                                         size),
+                                              false,
+                                              0.0f);
+      using (var c = UIGraphics.GetCurrentContext())
+      {
+        c.SetFillColor(0.5f,
+                       0.5f,
+                       0.5f,
+                       0.5f);
+        c.SetStrokeColor(0.5f,
+                         0.5f,
+                         0.5f,
+                         0.5f);
+        // settings needs to be adjusted from the SVG path values, those works well for FontAwesome
+        c.TranslateCTM(4f,
+                       size - 4);
+        c.ScaleCTM(size / 2500,
+                   -size / 2500);
+        render(c);
+      }
+      UIImage img = UIGraphics.GetImageFromCurrentImageContext();
+      UIGraphics.EndImageContext();
+      return img;
+    }
+  }
 }
